@@ -1,1 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Промокоды и скидки</title>
+    <style>
+        /* Стили сайта */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        header p {
+            margin-top: 10px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 30px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .search-box:focus {
+            border-color: #667eea;
+        }
+        .promo-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+        .promo-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .promo-info h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #222;
+        }
+        .promo-info p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .promo-action {
+            text-align: right;
+        }
+        .promo-code {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4338ca;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px dashed #4338ca;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .btn-copy {
+            display: block;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        .btn-copy:hover {
+            background: #5a67d8;
+        }
+        .btn-copy.copied {
+            background: #10b981; /* Зеленый цвет при копировании */
+        }
+        
+        /* Адаптив для телефонов */
+        @media (max-width: 600px) {
+            .promo-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .promo-action {
+                text-align: left;
+                margin-top: 15px;
+                width: 100%;
+            }
+            .promo-code {
+                width: 100%;
+                box-sizing: border-box;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <h1>🎁 Лучшие промокоды</h1>
+        <p>Экономь на покупках с нашими скидками</p>
+    </header>
+
+    <div class="container">
+        <!-- Поле поиска -->
+        <input type="text" id="searchInput" class="search-box" placeholder="Поиск по магазинам (например: Ozon, Wildberries)..." onkeyup="filterPromos()">
+
+        <!-- Список промокодов -->
+        <div id="promoList">
+            
+            <!-- Карточка 1 -->
+          <div class="promo-card" data-name="ozon">
+                <div class="promo-info">
+                    <h3>Скидка 15% на первый заказ</h3>
+                    <p>Магазин: Ozon</p>
+                </div>
+                <div class="promo-action">
+                    <div class="promo-code" id="code-1">OZON15</div>
+                    <button class="btn-copy" onclick="copyCode('OZON15', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Карточка 2 -->
+            <div class="promo-card" data-name="wildberries">
+                <div class="promo-info">
+                    <h3>Скидка 500 рублей от 2000 руб.</h3>
+                    <p>Магазин: Wildberries</p>
+                </div>
+                <div class="promo-action">
+                    <div class="promo-code" id="code-2">WB500NEW</div>
+                    <button class="btn-copy" onclick="copyCode('WB500NEW', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Карточка 3 -->
+            <div class="promo-card" data-name="яндекс маркет">
+                <div class="promo-info">
+                    <h3>Бесплатная доставка</h3>
+                    <p>Магазин: Яндекс Маркет</p>
+                </div>
+                <div class="promo-action">
+                    <div class="promo-code" id="code-3">YADELIVERY</div>
+                    <button class="btn-copy" onclick="copyCode('YADELIVERY', this)">Копировать</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Функция копирования промокода
+        function copyCode(code, button) {
+            // Копируем текст в буфер обмена
+            navigator.clipboard.writeText(code).then(() => {
+                // Меняем текст на кнопке
+                const originalText = button.innerText;
+                button.innerText = 'Скопировано! ✓';
+                button.classList.add('copied');
+
+                // Возвращаем исходный вид через 2 секунды
+                setTimeout(() => {
+                    button.innerText = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Ошибка копирования: ', err);
+                alert('Не удалось скопировать. Выделите код вручную.');
+            });
+        }
+
+        // Функция поиска
+        function filterPromos() {
+            // Получаем текст из поисковой строки и переводим в нижний регистр
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            // Получаем все карточки
+            const cards = document.querySelectorAll('.promo-card');
+
+            // Проходимся по каждой карточке
+            cards.forEach(card => {
+                // Берем название магазина из атрибута data-name
+                const storeName = card.getAttribute('data-name').toLowerCase();
+                
+                // Если название содержит текст поиска, показываем, иначе скрываем
+                if (storeName.includes(searchText)) {
+                    card.style.display = 'flex'; // Возвращаем изначальное отображение
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
