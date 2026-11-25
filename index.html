@@ -3,175 +3,554 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Промокоды и скидки</title>
+    <title>Мега-База Промокодов</title>
     <style>
-        /* Стили сайта */
+        /* Базовые стили */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --success: #10b981;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
             padding: 0;
+            line-height: 1.5;
         }
+
+        /* Шапка */
         header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white;
             text-align: center;
-            padding: 40px 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 50px 20px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
-        header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-        header p {
-            margin-top: 10px;
-            font-size: 16px;
-            opacity: 0.9;
-        }
+        header h1 { margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.5px;}
+        header p { margin-top: 10px; font-size: 18px; opacity: 0.9; }
+
+        /* Контейнер */
         .container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-        .search-box {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 30px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        .search-box:focus {
-            border-color: #667eea;
-        }
-        .promo-card {
-            background: white;
-            border-radius: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Поиск и фильтры */
+        .controls {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.2s;
-        }
-        .promo-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .promo-info h3 {
-            margin: 0 0 10px 0;
-            font-size: 18px;
-            color: #222;
-        }
-        .promo-info p {
-            margin: 0;
-            color: #666;
-            font-size: 14px;
-        }
-        .promo-action {
-            text-align: right;
-        }
-        .promo-code {
-            display: inline-block;
-            background: #eef2ff;
-            color: #4338ca;
-            font-weight: bold;
-            padding: 8px 12px;
-            border-radius: 5px;
-            border: 1px dashed #4338ca;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        .btn-copy {
-            display: block;
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            width: 100%;
-            transition: background 0.3s;
-        }
-        .btn-copy:hover {
-            background: #5a67d8;
-        }
-        .btn-copy.copied {
-            background: #10b981; /* Зеленый цвет при копировании */
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+            margin-top: -30px;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
         
-        /* Адаптив для телефонов */
+        .search-box {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+        .search-box:focus { 
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .cat-btn {
+            background: #f1f5f9;
+            border: none;
+            color: var(--text-light);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .cat-btn:hover { background: #e2e8f0; color: var(--text); }
+        .cat-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Сетка карточек */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* Карточка */
+        .promo-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .promo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+            border-color: #cbd5e1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo-container {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid #f1f5f9;
+            padding: 8px;
+            flex-shrink: 0;
+        }
+        .logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .store-name {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .promo-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            color: var(--text);
+            flex-grow: 1;
+        }
+
+        /* Нижняя часть карточки (промокод и кнопка) */
+        .promo-bottom {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+            margin-top: auto;
+        }
+
+        .promo-code {
+            flex-grow: 1;
+            background: #f8fafc;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px dashed #cbd5e1;
+            text-align: center;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-copy {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-copy:hover { background: var(--primary-hover); }
+        .btn-copy.copied { 
+            background: var(--success); 
+            pointer-events: none;
+        }
+
+        /* Бейджи */
+        .badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: #ef4444;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+            text-transform: uppercase;
+        }
+
         @media (max-width: 600px) {
-            .promo-card {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .promo-action {
-                text-align: left;
-                margin-top: 15px;
-                width: 100%;
-            }
-            .promo-code {
-                width: 100%;
-                box-sizing: border-box;
-                text-align: center;
-            }
+            .controls { padding: 15px; }
+            .promo-bottom { flex-direction: column; }
+            .btn-copy { padding: 14px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🎁 Лучшие промокоды</h1>
-        <p>Экономь на покупках с нашими скидками</p>
+        <h1>🎁 Мега-База Промокодов</h1>
+        <p>Более 20 проверенных скидок на любой вкус</p>
     </header>
 
     <div class="container">
-        <!-- Поле поиска -->
-        <input type="text" id="searchInput" class="search-box" placeholder="Поиск по магазинам (например: Ozon, Wildberries)..." onkeyup="filterPromos()">
-
-        <!-- Список промокодов -->
-        <div id="promoList">
+        <!-- Панель управления -->
+        <div class="controls">
+            <input type="text" id="searchInput" class="search-box" placeholder="🔍 Поиск по магазинам и сервисам..." onkeyup="filterPromos()">
             
-            <!-- Карточка 1 -->
-          <div class="promo-card" data-name="ozon">
-                <div class="promo-info">
-                    <h3>Скидка 15% на первый заказ</h3>
-                    <p>Магазин: Ozon</p>
+            <div class="categories">
+                <button class="cat-btn active" onclick="filterCategory('all', this)">Все предложения</button>
+                <button class="cat-btn" onclick="filterCategory('market', this)">Маркетплейсы</button>
+                <button class="cat-btn" onclick="filterCategory('food', this)">Еда и Доставка</button>
+                <button class="cat-btn" onclick="filterCategory('tech', this)">Техника и Красота</button>
+                <button class="cat-btn" onclick="filterCategory('games', this)">Игры и Софт</button>
+                <button class="cat-btn" onclick="filterCategory('travel', this)">Путешествия</button>
+            </div>
+        </div>
+
+        <!-- Сетка промокодов -->
+        <div class="grid" id="promoList">
+            
+            <!-- Ozon -->
+            <div class="promo-card" data-name="ozon" data-cat="market">
+                <div class="badge">🔥 Хит</div>
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Ozon_logo.svg/512px-Ozon_logo.svg.png" alt="Ozon"></div>
+                    <div class="store-name">Ozon</div>
                 </div>
-                <div class="promo-action">
-                    <div class="promo-code" id="code-1">OZON15</div>
-                    <button class="btn-copy" onclick="copyCode('OZON15', this)">Копировать</button>
+                <h3 class="promo-title">Скидка 15% на первый заказ для новых клиентов</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">OZON15NEW</div>
+                    <button class="btn-copy" onclick="copyCode('OZON15NEW', this)">Копировать</button>
                 </div>
             </div>
 
-            <!-- Карточка 2 -->
-            <div class="promo-card" data-name="wildberries">
-                <div class="promo-info">
-                    <h3>Скидка 500 рублей от 2000 руб.</h3>
-                    <p>Магазин: Wildberries</p>
+            <!-- Wildberries -->
+            <div class="promo-card" data-name="wildberries" data-cat="market">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Wildberries_logo.svg/512px-Wildberries_logo.svg.png" alt="Wildberries"></div>
+                    <div class="store-name">Wildberries</div>
                 </div>
-                <div class="promo-action">
-                    <div class="promo-code" id="code-2">WB500NEW</div>
+                <h3 class="promo-title">Скидка 500 рублей при заказе от 2000 рублей</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">WB500NEW</div>
                     <button class="btn-copy" onclick="copyCode('WB500NEW', this)">Копировать</button>
                 </div>
             </div>
 
-            <!-- Карточка 3 -->
-            <div class="promo-card" data-name="яндекс маркет">
-                <div class="promo-info">
-                    <h3>Бесплатная доставка</h3>
-                    <p>Магазин: Яндекс Маркет</p>
+            <!-- Яндекс Маркет -->
+            <div class="promo-card" data-name="яндекс маркет" data-cat="market">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Yandex_Market_Logo.svg/512px-Yandex_Market_Logo.svg.png" alt="Яндекс Маркет"></div>
+                    <div class="store-name">Яндекс Маркет</div>
                 </div>
-                <div class="promo-action">
-                    <div class="promo-code" id="code-3">YADELIVERY</div>
+                <h3 class="promo-title">Бесплатная доставка на первый заказ</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">YADELIVERY</div>
                     <button class="btn-copy" onclick="copyCode('YADELIVERY', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- AliExpress -->
+            <div class="promo-card" data-name="алиэкспресс" data-cat="market">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/AliExpress_logo.svg/512px-AliExpress_logo.svg.png" alt="AliExpress"></div>
+                    <div class="store-name">AliExpress</div>
+                </div>
+                <h3 class="promo-title">Скидка $3 на заказы от $10</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">ALI3OFF</div>
+                    <button class="btn-copy" onclick="copyCode('ALI3OFF', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Мегамаркет -->
+            <div class="promo-card" data-name="мегамаркет" data-cat="market">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Megamarket_logo.svg/512px-Megamarket_logo.svg.png" alt="Мегамаркет"></div>
+                    <div class="store-name">Мегамаркет</div>
+                </div>
+                <h3 class="promo-title">Скидка 1000 руб. при заказе от 3000 руб.</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">MEGA1000</div>
+                    <button class="btn-copy" onclick="copyCode('MEGA1000', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Авито -->
+            <div class="promo-card" data-name="авито" data-cat="market">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Avito_logo.svg/512px-Avito_logo.svg.png" alt="Авито"></div>
+                    <div class="store-name">Авито</div>
+                </div>
+                <h3 class="promo-title">Скидка 50% на продвижение объявления</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">AVITO50</div>
+                    <button class="btn-copy" onclick="copyCode('AVITO50', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Яндекс Еда -->
+            <div class="promo-card" data-name="яндекс еда" data-cat="food">
+                <div class="badge">🔥 Хит</div>
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Yandex_Food_Logo.svg/512px-Yandex_Food_Logo.svg.png" alt="Яндекс Еда"></div>
+                    <div class="store-name">Яндекс Еда</div>
+                </div>
+                <h3 class="promo-title">Скидка 300 руб. на первый заказ еды</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">EAT300</div>
+                    <button class="btn-copy" onclick="copyCode('EAT300', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Самокат -->
+            <div class="promo-card" data-name="самокат" data-cat="food">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Samokat_logo.svg/512px-Samokat_logo.svg.png" alt="Самокат"></div>
+                    <div class="store-name">Самокат</div>
+                </div>
+                <h3 class="promo-title">Скидка 20% на первый заказ продуктов</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">SAM20</div>
+                    <button class="btn-copy" onclick="copyCode('SAM20', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Delivery Club -->
+            <div class="promo-card" data-name="деливери клаб" data-cat="food">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Delivery_Club_logo.svg/512px-Delivery_Club_logo.svg.png" alt="Delivery Club"></div>
+                    <div class="store-name">Delivery Club</div>
+                </div>
+                <h3 class="promo-title">Бесплатная доставка на заказы от 500 руб.</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">DELFREE</div>
+                    <button class="btn-copy" onclick="copyCode('DELFREE', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- ВкусВилл -->
+            <div class="promo-card" data-name="вкусвилл" data-cat="food">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/VkusVill_logo.svg/512px-VkusVill_logo.svg.png" alt="ВкусВилл"></div>
+                    <div class="store-name">ВкусВилл</div>
+                </div>
+                <h3 class="promo-title">Скидка 500 руб. на первый заказ от 1000 руб.</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">VKUS500</div>
+                    <button class="btn-copy" onclick="copyCode('VKUS500', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Додо Пицца -->
+            <div class="promo-card" data-name="додо пицца" data-cat="food">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Dodo_Pizza_logo.svg/512px-Dodo_Pizza_logo.svg.png" alt="Додо Пицца"></div>
+                    <div class="store-name">Додо Пицца</div>
+                </div>
+                <h3 class="promo-title">Скидка 15% на любую пиццу в приложении</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">DODO15</div>
+                    <button class="btn-copy" onclick="copyCode('DODO15', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- М.Видео -->
+            <div class="promo-card" data-name="мвидео" data-cat="tech">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/M.Video_logo.svg/512px-M.Video_logo.svg.png" alt="М.Видео"></div>
+                    <div class="store-name">М.Видео</div>
+                </div>
+                <h3 class="promo-title">Скидка 1500 руб. на смартфоны и ноутбуки</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">MVIDEO1500</div>
+                    <button class="btn-copy" onclick="copyCode('MVIDEO1500', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- DNS -->
+            <div class="promo-card" data-name="днс" data-cat="tech">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/DNS_logo.svg/512px-DNS_logo.svg.png" alt="DNS"></div>
+                    <div class="store-name">DNS</div>
+                </div>
+                <h3 class="promo-title">Скидка 5% на сборку компьютера</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">DNS5PC</div>
+                    <button class="btn-copy" onclick="copyCode('DNS5PC', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Эльдорадо -->
+            <div class="promo-card" data-name="эльдорадо" data-cat="tech">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Eldorado_logo.svg/512px-Eldorado_logo.svg.png" alt="Эльдорадо"></div>
+                    <div class="store-name">Эльдорадо</div>
+                </div>
+                <h3 class="promo-title">Скидка 1000 руб. при покупке от 5000 руб.</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">ELD1000</div>
+                    <button class="btn-copy" onclick="copyCode('ELD1000', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Золотое Яблоко -->
+            <div class="promo-card" data-name="золотое яблоко" data-cat="tech">
+                <div class="badge">🔥 Хит</div>
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Golden_Apple_logo.svg/512px-Golden_Apple_logo.svg.png" alt="Золотое Яблоко"></div>
+                    <div class="store-name">Золотое Яблоко</div>
+                </div>
+                <h3 class="promo-title">Скидка 20% на косметику и парфюмерию</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">GOLD20</div>
+                    <button class="btn-copy" onclick="copyCode('GOLD20', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Steam -->
+            <div class="promo-card" data-name="steam" data-cat="games">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png" alt="Steam"></div>
+                    <div class="store-name">Steam</div>
+                </div>
+                <h3 class="promo-title">Скидка 10% на игры из списка желаемого</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">STEAM10</div>
+                    <button class="btn-copy" onclick="copyCode('STEAM10', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Epic Games -->
+            <div class="promo-card" data-name="epic games" data-cat="games">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Epic_Games_logo.svg/512px-Epic_Games_logo.svg.png" alt="Epic Games"></div>
+                    <div class="store-name">Epic Games</div>
+                </div>
+                <h3 class="promo-title">Скидка 300 руб. на игры от 1000 руб.</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">EPIC300</div>
+                    <button class="btn-copy" onclick="copyCode('EPIC300', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Kaspersky -->
+            <div class="promo-card" data-name="kaspersky" data-cat="games">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Kaspersky_logo.svg/512px-Kaspersky_logo.svg.png" alt="Kaspersky"></div>
+                    <div class="store-name">Kaspersky</div>
+                </div>
+                <h3 class="promo-title">Скидка 25% на антивирусные программы</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">KASPERSKY25</div>
+                    <button class="btn-copy" onclick="copyCode('KASPERSKY25', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Яндекс Плюс -->
+            <div class="promo-card" data-name="яндекс плюс" data-cat="games">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Yandex_Plus_logo.svg/512px-Yandex_Plus_logo.svg.png" alt="Яндекс Плюс"></div>
+                    <div class="store-name">Яндекс Плюс</div>
+                </div>
+                <h3 class="promo-title">3 месяца подписки в подарок для новых юзеров</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">PLUS3M</div>
+                    <button class="btn-copy" onclick="copyCode('PLUS3M', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Островок -->
+            <div class="promo-card" data-name="островок" data-cat="travel">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Ostrovok_logo.svg/512px-Ostrovok_logo.svg.png" alt="Островок"></div>
+                    <div class="store-name">Островок</div>
+                </div>
+                <h3 class="promo-title">Скидка 1000 руб. на бронирование отелей</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">OSTROV1000</div>
+                    <button class="btn-copy" onclick="copyCode('OSTROV1000', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- Авиасейлс -->
+            <div class="promo-card" data-name="авиасейлс" data-cat="travel">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Aviasales_logo.svg/512px-Aviasales_logo.svg.png" alt="Авиасейлс"></div>
+                    <div class="store-name">Авиасейлс</div>
+                </div>
+                <h3 class="promo-title">Скидка 500 руб. на авиабилеты</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">AVIA500</div>
+                    <button class="btn-copy" onclick="copyCode('AVIA500', this)">Копировать</button>
+                </div>
+            </div>
+
+            <!-- РЖД -->
+            <div class="promo-card" data-name="ржд" data-cat="travel">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/RZD_logo.svg/512px-RZD_logo.svg.png" alt="РЖД"></div>
+                    <div class="store-name">РЖД</div>
+                </div>
+                <h3 class="promo-title">Скидка 15% на билеты в купе</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">RZD15</div>
+                    <button class="btn-copy" onclick="copyCode('RZD15', this)">Копировать</button>
+                </div>
+            </div>
+            
+            <!-- Тинькофф -->
+            <div class="promo-card" data-name="тинькофф" data-cat="travel">
+                <div class="card-header">
+                    <div class="logo-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Tinkoff_logo.svg/512px-Tinkoff_logo.svg.png" alt="Тинькофф"></div>
+                    <div class="store-name">Тинькофф</div>
+                </div>
+                <h3 class="promo-title">Кэшбэк 10% на отели и путешествия</h3>
+                <div class="promo-bottom">
+                    <div class="promo-code">TRAVEL10</div>
+                    <button class="btn-copy" onclick="copyCode('TRAVEL10', this)">Копировать</button>
                 </div>
             </div>
 
@@ -179,41 +558,48 @@
     </div>
 
     <script>
-        // Функция копирования промокода
+        // Логика копирования
         function copyCode(code, button) {
-            // Копируем текст в буфер обмена
             navigator.clipboard.writeText(code).then(() => {
-                // Меняем текст на кнопке
                 const originalText = button.innerText;
-                button.innerText = 'Скопировано! ✓';
+                button.innerText = '✓';
                 button.classList.add('copied');
-
-                // Возвращаем исходный вид через 2 секунды
+                
                 setTimeout(() => {
                     button.innerText = originalText;
                     button.classList.remove('copied');
                 }, 2000);
             }).catch(err => {
-                console.error('Ошибка копирования: ', err);
-                alert('Не удалось скопировать. Выделите код вручную.');
+                alert('Не удалось скопировать. Попробуйте вручную.');
             });
         }
 
-        // Функция поиска
+        // Поиск
         function filterPromos() {
-            // Получаем текст из поисковой строки и переводим в нижний регистр
             const searchText = document.getElementById('searchInput').value.toLowerCase();
-            // Получаем все карточки
             const cards = document.querySelectorAll('.promo-card');
-
-            // Проходимся по каждой карточке
+            
             cards.forEach(card => {
-                // Берем название магазина из атрибута data-name
                 const storeName = card.getAttribute('data-name').toLowerCase();
+                const title = card.querySelector('.promo-title').innerText.toLowerCase();
                 
-                // Если название содержит текст поиска, показываем, иначе скрываем
-                if (storeName.includes(searchText)) {
-                    card.style.display = 'flex'; // Возвращаем изначальное отображение
+                if (storeName.includes(searchText) || title.includes(searchText)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Фильтр по категориям
+        function filterCategory(category, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const cards = document.querySelectorAll('.promo-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-cat') === category) {
+                    card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }
